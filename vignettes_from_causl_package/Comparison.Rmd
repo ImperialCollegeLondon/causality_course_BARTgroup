@@ -276,7 +276,7 @@ forms <- list(L ~ A0,
                   ~ A0)
 ```
 
-```{r mult_sims, eval=FALSE}
+```{r mult_sims, eval=TRUE}
 set.seed(234)
 n <- 250
 N <- 1e3
