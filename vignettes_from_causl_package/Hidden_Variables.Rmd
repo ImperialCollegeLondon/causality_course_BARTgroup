@@ -1,0 +1,139 @@
+---
+title: "Hidden Variables"
+author: "Robin J. Evans"
+date: "27/05/2021"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Hidden Variables}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+We now consider how one can incorporate latent variables into our simulation,
+explicitly giving their simulated values.
+
+In this example we use the `survey` package to get robust standard errors when 
+reweighting.  We start by loading the libraries.
+```{r setup, echo=2:3, message=FALSE}
+knitr::opts_chunk$set(echo = TRUE); options(digits=3)
+library(causl)
+library(survey)
+```
+
+## Set Up the Model
+
+We begin by setting up the formulas, families and parameter values:
+```{r setup_model}
+formulas = list(list(U ~ 1, L ~ A0), list(A0 ~ 1, A1 ~ A0*L), Y ~ A0*A1, ~A0*A1)
+fam = list(c(4,3), c(5,5), c(3), c(1,1,1))
+
+pars <- list(A0 = list(beta = 0),
+             U = list(beta = 0, phi=1),
+             L = list(beta = c(0.3,-0.2), phi=1),
+             A1 = list(beta = c(-0.3,0.4,0.3,0)),
+             Y = list(beta = c(-0.5,0.2,0.3,0), phi=1),
+             cop = list(beta = matrix(c(1,0,0,0,
+                                 1,0,0,0,
+                                 0.5,0,0,0), nrow=4)))
+```
+
+## Simulate data and check distributions
+
+Now simulate the data.
+```{r simulate}
+set.seed(123)
+n <- 1e4
+dat <- rfrugalParam(n, formulas, family=fam, pars=pars)
+# dat <- causalSamp(n, formulas, family=fam, pars=pars)
+```
+We can then check that the parameter values match their intended values:
+```{r check_data}
+summary(svyglm(L ~ A0, family=Gamma(link="log"), 
+               design=svydesign(id=~1, weights=~1, data=dat)))$coef
+glmA1 <- glm(A1 ~ A0*L, family=binomial, data=dat)
+summary(glmA1)$coef
+```
+These look close to the desired values.
+
+## Wrong models and inverse probability weighting
+
+We can start by fitting some naïve regressions.
+
+```{r wrong}
+## wrong models
+mod_w <- svyglm(Y ~ A0*A1, family=Gamma(link="log"), 
+                design=svydesign(id=~1, weights=rep(1,nrow(dat)), data=dat))
+```
+```{r tab_w, echo=FALSE}
+tab_w <- cbind(c(-0.5,0.2,0.3,0), summary(mod_w)$coef[,-3])
+tab_w[,4] <- pt(abs((tab_w[,2]-tab_w[,1])/tab_w[,3]), df=n-4, lower.tail = FALSE)
+colnames(tab_w) <- NULL
+library(kableExtra)
+kbl(tab_w, digits = c(1,3,3,2), booktabs=TRUE)  %>%
+  add_header_above(c("Coef","Truth","Est.", "Std. Err.", "p-value"))
+```
+
+We see that the p-values for both the intercept at the $A_1$ coefficient are 
+highly significant.
+
+<!-- ```{r wrong2} -->
+<!-- mod_w2 <- glm(Y ~ A0*A1, family=Gamma(link="log"), data=dat) -->
+<!-- ``` -->
+
+<!-- ```{r tab_w2, echo=FALSE} -->
+<!-- tab_w <- cbind(c(-0.5,0.2,0.3,0), summary(mod_w2)$coef[,-3]) -->
+<!-- tab_w[,4] <- pt(abs((tab_w[,2]-tab_w[,1])/tab_w[,3]), df=n-4, lower.tail = FALSE) -->
+<!-- colnames(tab_w) <- NULL -->
+<!-- kbl(tab_w, digits = c(1,3,3,2), booktabs=TRUE)  %>% -->
+<!--   add_header_above(c("Coef","Truth","Est.", "Std. Err.", "p-value")) -->
+<!-- ``` -->
+
+<!-- Again, we have a similar picture. -->
+
+
+We can also try estimating the inverse probability of treatment weights
+and using them to obtain a consistent estimate of the treatment effects.
+```{r ps}
+w <- predict(glmA1, type="response")
+ps <- dat$A1/w + (1-dat$A1)/(1-w)
+
+## correct model
+mod_c <- svyglm(Y ~ A0*A1, family=Gamma(link="log"), 
+                design=svydesign(id=~1, weights=ps, data=dat))
+```
+
+
+```{r, echo=FALSE}
+tab_c <- cbind(c(-0.5,0.2,0.3,0), summary(mod_c)$coef[,-3])
+tab_c[,4] <- pt(abs((tab_c[,2]-tab_c[,1])/tab_c[,3]), df=n-4, lower.tail = FALSE)
+colnames(tab_c) <- NULL
+kbl(tab_c, digits = c(1,3,3,2), booktabs=TRUE)  %>%
+  add_header_above(c("Coef","Truth","Est.", "Std. Err.", "p-value"))
+# knitr::kable(tab_c)
+```
+Indeed, they are all within two standard errors of their nominal values.
+```{r, echo=FALSE, eval=FALSE}
+# summary(glm(Y ~ A0*A1, family=Gamma(link="log"), weights = wt, data=dat))$coef
+```
+
+## Maximum likelihood approach
+
+We can also fit the data using maximum likelihood directly.  Set `eval=TRUE` 
+to run this chunk.
+```{r fit_data, cache=TRUE, eval=FALSE}
+out <- fitCausal(dat, formulas = list(L ~ A0, Y ~ A0*A1, ~1), family = c(3,3,1))
+out
+```
+Again, all estimates are within two standard errors of the true values.
+
+## Including the latent variable
+
+We can transform $U$ to a standard normal ($Z$) and include it in the model
+as well.  (Again, set `eval=TRUE` to run this chunk.)
+
+```{r fit_dataU, cache=TRUE, eval=FALSE}
+dat <- dplyr::mutate(dat, Z = qnorm(U))  # transform to normal for fitting
+out <- fitCausal(dat, formulas = list(Z ~ 1, L ~ A0, Y ~ A0*A1, ~A0), family = c(1,3,3,1))
+out
+```
+Note that again the results look correct including the 'hidden' variable $U$/$Z$.
