@@ -41,3 +41,21 @@ pars <- list(A = list(beta=coeff),
 data <- rfrugalParam(formulas=forms, family=fams, pars=pars, dat=dat)
 print(summary(data$A))
 write.csv(data, paste0(script_directory, '/data/dataB.csv') )
+
+
+
+
+# parameters for simulations
+forms <- list(list(),
+              list(A ~ x_1 + x_3 + x_4),
+              list(Y ~ A + x_1 + x_3 + x_4),
+              list(~ 1))
+fams <- list(integer(0), 5, 1, 1)
+pars <- list(A = list(beta=c(-1.5,0.03,0.02,0.05)),
+             Y = list(beta=c(3200, -500, 0.05, 0.05, 0.05), phi=400^2),
+             cop = list(beta=-1))
+
+# generate data
+data <- rfrugalParam(formulas=forms, family=fams, pars=pars, dat=dat)
+print(summary(data$A))
+write.csv(data, paste0(script_directory, '/data/dataC.csv') )
