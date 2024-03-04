@@ -7,7 +7,7 @@ import numpy as np
 
 
 config = get_config()
-data = pd.read_csv(config.dataA_path, index_col=[0]).drop(["x_2","x_21","x_24"], axis=1)
+data = pd.read_csv(config.dataA_path).drop(["x_2","x_21","x_24"], axis=1)
 N, p = data.shape
 # Construct DoubleMLData object
 dml_data = DoubleMLData(data, y_col='Y', d_cols='A',
