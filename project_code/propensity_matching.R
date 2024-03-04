@@ -1,0 +1,10 @@
+library(dplyr)
+library(causl)
+library(aciccomp2016)
+library(BART)
+library(fastDummies)
+library(rstudioapi)
+set.seed(12345)
+script_directory = dirname(rstudioapi::getSourceEditorContext()$path)
+
+dataA = read.csv(paste0('/data/dataA.csv'))

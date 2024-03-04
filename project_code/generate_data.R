@@ -23,7 +23,7 @@ pars <- list(A = list(beta=c(-1.5,0.03,0.02,0.05)),
 # generate data
 data <- rfrugalParam(formulas=forms, family=fams, pars=pars, dat=dat)
 print(summary(data$A))
-write.csv(data, paste0(script_directory, '/data/dataA.csv') )
+write.csv(data, paste0(script_directory, '/data/dataA.csv'), row.names=FALSE  )
 
 
 coeff = c(1, rep(c(0.01,-0.01), 10)[1:6] )
@@ -40,7 +40,7 @@ pars <- list(A = list(beta=coeff),
 # generate data
 data <- rfrugalParam(formulas=forms, family=fams, pars=pars, dat=dat)
 print(summary(data$A))
-write.csv(data, paste0(script_directory, '/data/dataB.csv') )
+write.csv(data, paste0(script_directory, '/data/dataB.csv'), row.names=FALSE )
 
 
 
@@ -58,4 +58,4 @@ pars <- list(A = list(beta=c(-1.5,0.03,0.02,0.05)),
 # generate data
 data <- rfrugalParam(formulas=forms, family=fams, pars=pars, dat=dat)
 print(summary(data$A))
-write.csv(data, paste0(script_directory, '/data/dataC.csv') )
+write.csv(data, paste0(script_directory, '/data/dataC.csv') , row.names=FALSE)
