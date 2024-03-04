@@ -17,7 +17,7 @@ forms <- list(list(),
               list(~ 1))
 fams <- list(integer(0), 5, 1, 1)
 pars <- list(A = list(beta=c(-1.5,0.03,0.02,0.05)),
-             Y = list(beta=c(3200, -500), phi=400^2),
+             Y = list(beta=c(3200, -100), phi=400^2),
              cop = list(beta=-1))
 
 # generate data A
@@ -34,7 +34,7 @@ forms <- list(list(),
               list(~ 1))
 fams <- list(integer(0), 5, 1, 1)
 pars <- list(A = list(beta=coeff),
-             Y = list(beta=c(3200, -500), phi=400^2),
+             Y = list(beta=c(3200, -100), phi=400^2),
              cop = list(beta=-1))
 
 # generate data B
@@ -53,7 +53,7 @@ forms <- list(list(),
               list(~ 1))
 fams <- list(integer(0), 5, 1, 1)
 pars <- list(A = list(beta=c(-1.5,0.03,0.02,0.05)),
-             Y = list(beta=c(3200, -500, 0.05, 0.05), phi=400^2),
+             Y = list(beta=c(3200, -100, -50, 50), phi=400^2),
              cop = list(beta=-1))
 
 # generate data C
@@ -69,9 +69,9 @@ forms <- list(list(),
               list(~ 1))
 fams <- list(integer(0), 5, 1, 1)
 pars <- list(A = list(beta=c(-1.5,0.03,0.02,0.05)),
-             Y = list(beta=c(3200, -500, 0.05, 0.05), phi=400^2),
+             Y = list(beta=c(3200, -100, 50, -50), phi=400^2),
              cop = list(beta=-1))
-link = list(character(0),"logit", "log")
+link = list(character(0),"logit", "log") #logit is default
 
 # generate data D
 data1 <- rfrugalParam(formulas=forms, family=fams, pars=pars, dat=dat , link=link)
