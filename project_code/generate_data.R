@@ -24,10 +24,14 @@ print(paste0('DataA True ATE: -100'))
 data <- rfrugalParam(formulas=forms, family=fams, pars=pars, dat=dat)
 print(summary(data$A))
 write.csv(data, paste0(script_directory, '/data/dataA.csv'), row.names=FALSE)
+# remove 50% of untreated (A==0) data
+data <- data %>% filter(A==0 | runif(n()) < 0.5)
+print(summary(data$A))
+write.csv(data, paste0(script_directory, '/data/dataA_uneven.csv'), row.names=FALSE)
 
 
 
-# generate data C
+# generate data B
 coeff = c(1, rep(c(0.01,-0.01), 10)[1:6])
 forms <- list(list(),
               list(A ~ 1 + x_1^2 + x_3^2 + x_4^2 +x_1:x_3 + x_1:x_4 + x_3:x_4 ),
@@ -42,6 +46,11 @@ print(paste0('DataB True ATE: -100'))
 data <- rfrugalParam(formulas=forms, family=fams, pars=pars, dat=dat)
 print(summary(data$A))
 write.csv(data, paste0(script_directory, '/data/dataB.csv'), row.names=FALSE )
+# remove 50% of untreated (A==0) data
+data <- data %>% filter(A==0 | runif(n()) < 0.5)
+print(summary(data$A))
+write.csv(data, paste0(script_directory, '/data/dataB_uneven.csv'), row.names=FALSE)
+
 
 
 
@@ -60,6 +69,10 @@ print(paste0('TDataC True ATE: -100'))
 data <- rfrugalParam(formulas=forms, family=fams, pars=pars, dat=dat)
 print(summary(data$A))
 write.csv(data, paste0(script_directory, '/data/dataC.csv') , row.names=FALSE)
+# remove 50% of untreated (A==0) data
+data <- data %>% filter(A==0 | runif(n()) < 0.5)
+print(summary(data$A))
+write.csv(data, paste0(script_directory, '/data/dataC_uneven.csv') , row.names=FALSE)
 
 
 ## generate data D
@@ -78,3 +91,7 @@ print(paste0('TDataD True ATE (approx): ', 150 + round(mean(dat$x_1))*-10))
 data <- rfrugalParam(formulas=forms, family=fams, pars=pars, dat=dat)
 print(summary(data$A))
 write.csv(data, paste0(script_directory, '/data/dataD.csv') , row.names=FALSE)
+# remove 50% of untreated (A==0) data
+data <- data %>% filter(A==0 | runif(n()) < 0.5)
+print(summary(data$A))
+write.csv(data, paste0(script_directory, '/data/dataD_uneven.csv') , row.names=FALSE)
