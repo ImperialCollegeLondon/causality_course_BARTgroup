@@ -20,10 +20,10 @@ pars <- list(A = list(beta=c(-1.5,0.03,0.02,0.05)),
              Y = list(beta=c(3200, -500), phi=400^2),
              cop = list(beta=-1))
 
-# generate data
+# generate data A
 data <- rfrugalParam(formulas=forms, family=fams, pars=pars, dat=dat)
 print(summary(data$A))
-write.csv(data, paste0(script_directory, '/data/dataA.csv'), row.names=FALSE  )
+write.csv(data, paste0(script_directory, '/data/dataA.csv'), row.names=FALSE)
 
 
 coeff = c(1, rep(c(0.01,-0.01), 10)[1:6] )
@@ -37,10 +37,11 @@ pars <- list(A = list(beta=coeff),
              Y = list(beta=c(3200, -500), phi=400^2),
              cop = list(beta=-1))
 
-# generate data
+# generate data B
 data <- rfrugalParam(formulas=forms, family=fams, pars=pars, dat=dat)
 print(summary(data$A))
 write.csv(data, paste0(script_directory, '/data/dataB.csv'), row.names=FALSE )
+
 
 
 
@@ -55,7 +56,24 @@ pars <- list(A = list(beta=c(-1.5,0.03,0.02,0.05)),
              Y = list(beta=c(3200, -500, 0.05, 0.05), phi=400^2),
              cop = list(beta=-1))
 
-# generate data
+# generate data C
 data <- rfrugalParam(formulas=forms, family=fams, pars=pars, dat=dat)
 print(summary(data$A))
 write.csv(data, paste0(script_directory, '/data/dataC.csv') , row.names=FALSE)
+
+
+# parameters for simulations
+forms <- list(list(),
+              list(A ~ x_1 + x_3 + x_4),
+              list(Y ~ A + x_1 + x_3),
+              list(~ 1))
+fams <- list(integer(0), 5, 1, 1)
+pars <- list(A = list(beta=c(-1.5,0.03,0.02,0.05)),
+             Y = list(beta=c(3200, -500, 0.05, 0.05), phi=400^2),
+             cop = list(beta=-1))
+link = list(character(0),"logit", "log")
+
+# generate data D
+data1 <- rfrugalParam(formulas=forms, family=fams, pars=pars, dat=dat , link=link)
+print(summary(data$A))
+write.csv(data, paste0(script_directory, '/data/dataD.csv') , row.names=FALSE)
