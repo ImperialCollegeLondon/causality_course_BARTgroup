@@ -14,6 +14,12 @@ from utils.plotting_functions import forest_plot
 
 
 def estimate_ATE(dml_plr_tree: Union[DoubleMLPLIV,DoubleMLPLR], alpha: float) -> np.ndarray:
+    """
+    Estimate the ATE Confidence Interval given a model and a confidence level
+    :param dml_plr_tree: Model to fit
+    :param alpha: Confidence Level
+    :return: Confidence Interval for ATE
+    """
     # Fit and estimate parameters
     dml_plr_tree.fit()
     # Obtain coefficients
@@ -27,6 +33,12 @@ def estimate_ATE(dml_plr_tree: Union[DoubleMLPLIV,DoubleMLPLR], alpha: float) ->
 
 
 def double_ml(data: pd.DataFrame, config:ConfigDict) -> np.ndarray:
+    """
+    Double ML pipeline for ATE inference
+    :param data: Pandas Dataframe
+    :param config: ML Experiment Configuration File
+    :return: Confidence interval for ATE
+    """
     assert ("Y" in data.columns and "A" in data.columns)
     assert (0. < config.alpha < 1.)
     # Construct DoubleMLData object
@@ -56,11 +68,20 @@ def double_ml(data: pd.DataFrame, config:ConfigDict) -> np.ndarray:
 
 
 def prepare_data(config: ConfigDict) -> dict:
+    """
+    Prepare datasets for doubleML pipeline
+    :param config: Configuration File
+    :return: Dictionary with datasets
+    """
     dataA = pd.read_csv(config.dataA_path, index_col=[0]).drop(["x_2", "x_21", "x_24"], axis=1)
+    dataA_uneven = pd.read_csv(config.dataA_uneven_path, index_col=[0]).drop(["x_2", "x_21", "x_24"], axis=1)
     dataB = pd.read_csv(config.dataB_path, index_col=[0]).drop(["x_2", "x_21", "x_24"], axis=1)
+    dataB_uneven = pd.read_csv(config.dataB_uneven_path, index_col=[0]).drop(["x_2", "x_21", "x_24"], axis=1)
     dataC = pd.read_csv(config.dataC_path, index_col=[0]).drop(["x_2", "x_21", "x_24"], axis=1)
+    dataC_uneven = pd.read_csv(config.dataC_uneven_path, index_col=[0]).drop(["x_2", "x_21", "x_24"], axis=1)
     dataD = pd.read_csv(config.dataC_path, index_col=[0]).drop(["x_2", "x_21", "x_24"], axis=1)
-    return {"A":dataA, "B":dataB, "C":dataC, 'D':dataD}
+    dataD_uneven = pd.read_csv(config.dataD_uneven_path, index_col=[0]).drop(["x_2", "x_21", "x_24"], axis=1)
+    return {"A":dataA, "A_unev":dataA_uneven,"B":dataB, "B_unev":dataB_uneven,"C":dataC, "C_unev":dataC_uneven, 'D':dataD, "D_unev":dataD_uneven}
 
 
 
