@@ -4,9 +4,13 @@ from pathlib import Path
 def get_config():
     config = ConfigDict()
     config.dataA_path = str(Path(__file__).parent.parent) + "/project_code/data/dataA.csv"
+    config.dataA_uneven_path = str(Path(__file__).parent.parent) + "/project_code/data/dataA_uneven.csv"
     config.dataB_path = str(Path(__file__).parent.parent) + "/project_code/data/dataB.csv"
+    config.dataB_uneven_path = str(Path(__file__).parent.parent) + "/project_code/data/dataB_uneven.csv"
     config.dataC_path = str(Path(__file__).parent.parent) + "/project_code/data/dataC.csv"
+    config.dataC_uneven_path = str(Path(__file__).parent.parent) + "/project_code/data/dataC_uneven.csv"
     config.dataD_path = str(Path(__file__).parent.parent) + "/project_code/data/dataD.csv"
+    config.dataD_uneven_path = str(Path(__file__).parent.parent) + "/project_code/data/dataD_uneven.csv"
     config.alpha = 0.05
     config.n_trees = 200
     config.n_folds = 5
