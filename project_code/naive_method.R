@@ -1,4 +1,5 @@
 library(ggplot2)
+library(rstudioapi)
 
 set.seed(12345)
 # directory of the script
@@ -36,11 +37,11 @@ ci_upper = unlist(ci_upper)
 name_list = unlist(name_list)
 plot_data = data.frame(name_list, coefficients, ci_lower, ci_upper)
 ggplot(plot_data, aes(x=name_list, y=coefficients, ymin=ci_lower, ymax=ci_upper))+
-  geom_point(color= 'blue') +
-  geom_errorbar(width=0.25, color = 'blue') +
+  geom_point(color= 'blue', size = 3) +
+  geom_errorbar(width=0.25, color = 'blue', linewidth = 1.1) +
   theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
-  labs(title="ATE estimates and CI (95%) using naive method", x="Data", y="ATE estimate") +
-  geom_hline(yintercept=-100, linetype="dashed", color = "red")
+  labs(title="", x="Dataset Name", y="ATE estimate") +
+  geom_hline(yintercept=-100, linetype="dashed", color = "red", linewidth=1.1)
 # save plot
 directory = dirname(script_directory)
 ggsave(paste0(directory, '/pngs/naive_method.png'), dpi = 300)
