@@ -10,6 +10,8 @@ script_directory = dirname(rstudioapi::getSourceEditorContext()$path)
 # import aciccomp2016 data to simulate simular to 
 dat <- as_tibble(input_2016)
 for (r in seq_len(100)){
+  set.seed(12345 + r)
+  r = formatC(r, width=3, fla="0")
 ## generate data A
 forms <- list(list(),
               list(A ~ x_1 + x_3 + x_4),
@@ -72,7 +74,7 @@ write.csv(data, paste0(script_directory, '/data/dataC',r,'.csv') , row.names=FAL
 # remove 50% of untreated (A==0) data
 data <- data %>% filter(A==0 | runif(n()) < 0.5)
 print(summary(data$A))
-write.csv(data, paste0(script_directory, '/data/dataC_uneven',r,'.csv') , row.names=FALSE)
+write.csv(data, paste0(script_directory, '/data/dataC',r,'_uneven.csv') , row.names=FALSE)
 
 
 ## generate data D
