@@ -81,9 +81,7 @@ def prepare_data(config: ConfigDict) -> dict:
     dataC_uneven = pd.read_csv(config.dataC_uneven_path, index_col=[0]).drop(["x_2", "x_21", "x_24"], axis=1)
     dataD = pd.read_csv(config.dataC_path, index_col=[0]).drop(["x_2", "x_21", "x_24"], axis=1)
     dataD_uneven = pd.read_csv(config.dataD_uneven_path, index_col=[0]).drop(["x_2", "x_21", "x_24"], axis=1)
-    return {"A":dataA, "A_unev":dataA_uneven,"B":dataB, "B_unev":dataB_uneven,"C":dataC, "C_unev":dataC_uneven, 'D':dataD, "D_unev":dataD_uneven}
-
-
+    return {"A":dataA, "A_uneven":dataA_uneven,"B":dataB, "B_uneven":dataB_uneven,"C":dataC, "C_uneven":dataC_uneven, 'D':dataD, "D_uneven":dataD_uneven}
 
 
 if __name__ == "__main__":
@@ -91,6 +89,7 @@ if __name__ == "__main__":
     assert(config.alpha == 0.05)
     data_sets = prepare_data(config)
     ATEs = pd.DataFrame(None, index=np.array(data_sets.keys()), columns=["{}%".format((config.alpha/2)*100), "Mean", "{}%".format((1.-config.alpha/2)*100)])
+    print(ATEs)
     for key in data_sets.keys():
         k = double_ml(data_sets[key], config=config)
         ATEs.loc[key,:] = k

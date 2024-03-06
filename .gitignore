@@ -1,3 +1,6 @@
 .nosync
 *.png
 distribution*.pdf
+.Rproj.user
+.Rhistory
+__pycache__

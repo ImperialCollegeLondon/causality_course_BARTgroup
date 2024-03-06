@@ -29,13 +29,21 @@ def forest_plot(names:Union[list,np.ndarray, pd.Series], estimates:Union[list,np
     """
     plt.scatter(names, estimates, color='blue')
     plt.errorbar(names, estimates, yerr=[estimates - lower_limits, upper_limits - estimates],
-                 fmt='none', color='blue', capsize=5, capthick=2, label="{}\% 2-sided CI".format((1. - alpha)*100))
+                 fmt='none', color='blue', capsize=5, capthick=2, label="{}\% 2-sided CI".format(int((1. - alpha)*100)))
     plt.hlines(true_value, xmin=names[0], xmax=names[-1], label="True ATE", linestyles="dashed")
     # Customize the plot
     score_f = "$\psi_{2}$" if method=="IV-type" else "$\psi_{1}$"
-    plt.title('ATE Estimates using {}'.format(score_f))
-    plt.xlabel('Dataset Names')
+   # plt.title('ATE Estimates using {}'.format(score_f))
+    plt.xlabel('Datasets')
     plt.ylabel('ATE Estimate')
-    plt.legend()
-    plt.savefig(save_path)
-    plt.show()
+    # plt.legend()
+    plt.xticks(rotation=90)
+    # Change the size of the plot to square
+    plt.gcf().set_size_inches(6, 6)
+    # Change size of font for x and y labels
+    plt.xticks(fontsize=12)
+    plt.yticks(fontsize=12)
+    plt.tight_layout()
+    # make font bold 
+    plt.rcParams["font.weight"] = "bold"
+    plt.savefig(save_path, dpi=500) # Score_f
